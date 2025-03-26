@@ -26,10 +26,13 @@ app.get("/api/track", async (req, res) => {
     let browser;
 
     try {
-        browser = await chromium.launch({
-            headless: true,  
-            args: ["--no-sandbox", "--disable-setuid-sandbox"]
-        });
+     const browser = await chromium.launch({
+    headless: true,
+    executablePath: process.env.PLAYWRIGHT_BROWSERS_PATH 
+        ? `${process.env.PLAYWRIGHT_BROWSERS_PATH}/chromium/chrome-linux/chrome`
+        : undefined, 
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
 
         const page = await browser.newPage();
         await page.setUserAgent(
