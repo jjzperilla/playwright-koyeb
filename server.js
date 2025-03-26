@@ -5,6 +5,11 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
+// ✅ Root Route - Required for Koyeb Scaling to Zero
+app.get("/", (req, res) => {
+    res.send("Playwright Tracking API is running!");
+});
+
 app.get("/api/track", async (req, res) => {
     const trackingNumber = req.query.num;
     if (!trackingNumber) {
@@ -16,7 +21,7 @@ app.get("/api/track", async (req, res) => {
 
     try {
         browser = await chromium.launch({
-            headless: true,  // ✅ Playwright is fully headless by default
+            headless: true,  
             args: ["--no-sandbox", "--disable-setuid-sandbox"]
         });
 
@@ -31,7 +36,6 @@ app.get("/api/track", async (req, res) => {
 
         await page.goto(url, { waitUntil: "networkidle" });
 
-        // ✅ Wait for the page to load properly
         await page.waitForFunction(() => {
             return !document.body.innerText.includes("Please reload the page");
         }, { timeout: 60000 });
