@@ -5,9 +5,14 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
-// ✅ Root Route - Required for Koyeb Scaling to Zero
+// ✅ Health Check Route (Required for Koyeb)
 app.get("/", (req, res) => {
-    res.send("Playwright Tracking API is running!");
+    res.status(200).send("Service is running");
+});
+
+// ✅ Debug Route to Check if Playwright Works
+app.get("/health", (req, res) => {
+    res.json({ status: "OK", message: "Playwright service is ready!" });
 });
 
 app.get("/api/track", async (req, res) => {
@@ -77,6 +82,12 @@ app.get("/api/track", async (req, res) => {
     } finally {
         if (browser) await browser.close();
     }
+});
+
+// ✅ Start Express Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 
 // ✅ Export for Koyeb
