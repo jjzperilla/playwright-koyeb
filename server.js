@@ -15,6 +15,7 @@ app.get("/health", (req, res) => {
     res.json({ status: "OK", message: "Playwright service is ready!" });
 });
 
+// ✅ Main Scraping Route
 app.get("/api/track", async (req, res) => {
     const trackingNumber = req.query.num;
     if (!trackingNumber) {
@@ -39,7 +40,7 @@ app.get("/api/track", async (req, res) => {
             "Accept-Language": "en-US,en;q=0.9",
         });
 
-        await page.goto(url, { waitUntil: "networkidle" });
+        await page.goto(url, { waitUntil: "networkidle2" });
 
         await page.waitForFunction(() => {
             return !document.body.innerText.includes("Please reload the page");
@@ -80,11 +81,13 @@ app.get("/api/track", async (req, res) => {
         console.error("Scraping error:", error);
         res.status(500).json({ error: error.message });
     } finally {
-        if (browser) await browser.close();
+        if (browser) {
+            await browser.close();
+        }
     }
 });
 
-// ✅ Start Express Server
+// ✅ Start Express Server (Use Dynamic Port for Koyeb)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
