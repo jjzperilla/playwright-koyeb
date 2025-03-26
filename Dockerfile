@@ -1,22 +1,19 @@
-# Use Playwright's official image to avoid missing dependencies
+# Use Playwright’s official base image (includes dependencies)
 FROM mcr.microsoft.com/playwright:focal
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to optimize caching
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install ALL dependencies, including Playwright browsers
+RUN npm install && npx playwright install --with-deps
 
-# Install Playwright browsers explicitly
-RUN npx playwright install --with-deps
-
-# Copy application files
+# Copy all source code
 COPY . .
 
-# Expose the application port
+# Expose the application port (if needed)
 EXPOSE 3000
 
 # Start the application
